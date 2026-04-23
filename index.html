@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alerta Escolar</title>
+    <style>
+        body { display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        button { width: 90%; height: 300px; background: red; color: white; font-size: 30px; font-weight: bold; border: none; border-radius: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        button:active { background: darkred; }
+    </style>
+</head>
+<body>
+    <button id="btnAlerta">BOTÓN DE PÁNICO</button>
+
+    <script>
+        document.getElementById('btnAlerta').onclick = () => {
+            // Confirmación de seguridad básica
+            if (confirm("¿Está seguro de enviar una alerta de emergencia?")) {
+                navigator.geolocation.getCurrentPosition(pos => {
+                    fetch('/api/alerta', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({
+                            docente: "Docente Autorizado", // Luego lo cambiaremos por el nombre real
+                            lat: pos.coords.latitude,
+                            lon: pos.coords.longitude,
+                            time: new Date().toISOString()
+                        })
+                    }).then(() => alert("Alerta enviada a la policía."));
+                });
+            }
+        };
+    </script>
+</body>
+</html>
