@@ -1,21 +1,7 @@
-from http.server import BaseHTTPRequestHandler
-import json
-from supabase import create_client
-
-# ¡Copia y pega TU URL y TU KEY aquí nuevamente para estar seguros!
-URL = "https://knnnemdkahzovufelowc.supabase.co"
-KEY = "sb_publishable_kCqiY8Y2T2JuDRMzYQsL8Q_KR7K-ee2" 
-
-supabase = create_client(URL, KEY)
-
-class handler(BaseHTTPRequestHandler):
-    def do_POST(self):
-        content_length = int(self.headers['Content-Length'])
-        post_data = self.rfile.read(content_length)
-        data = json.loads(post_data.decode('utf-8'))
-        
-        try:
-            # Aquí está el truco: tiene que terminar en .execute()
+try:
+            # Imprimimos lo que recibimos para verlo en los logs de Vercel
+            print(f"DATOS RECIBIDOS: {data}")
+            
             supabase.table("alertas").insert({
                 "nombre": data.get("nombre"),
                 "escuela": data.get("escuela"),
@@ -28,17 +14,6 @@ class handler(BaseHTTPRequestHandler):
             
             self.send_response(200)
         except Exception as e:
-            # Si hay un error, lo imprimiremos en los logs de Vercel
-            print(f"ERROR AL GUARDAR: {e}")
+            # Esto es lo más importante: imprimirá el error real en Vercel
+            print(f"ERROR DE SUPABASE: {str(e)}")
             self.send_response(500)
-            
-        self.send_header('Content-type', 'application/json')
-        self.end_headers()
-        self.wfile.write(json.dumps({"status": "hecho"}).encode('utf-8'))
-
-    def do_OPTIONS(self):
-        self.send_response(200)
-        self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Access-Control-Allow-Methods', 'POST, OPTIONS')
-        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
-        self.end_headers()
