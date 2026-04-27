@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración de Usuario</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background-color: #f4f4f4; }
+        .container { background: white; padding: 20px; border-radius: 10px; max-width: 400px; margin: auto; }
+        input, select { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        button { width: 100%; padding: 15px; background-color: #28a745; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Mis Datos</h2>
+        <select id="escuela">
+            <option value="">Seleccione su Establecimiento</option>
+            <option value="Escuela 1">Escuela Normal</option>
+            <option value="Escuela 2">Colegio Nacional</option>
+            <option value="Escuela 3">Escuela Técnica</option>
+        </select>
+        <input type="text" id="nombre" placeholder="Nombre y Apellido">
+        <input type="text" id="dni" placeholder="Nro. de Documento">
+        <input type="text" id="cargo" placeholder="Cargo">
+        <input type="tel" id="telefono" placeholder="Teléfono de contacto">
+        <button onclick="guardarDatos()">Guardar Configuración</button>
+    </div>
+
+    <script>
+        function guardarDatos() {
+            const usuario = {
+                escuela: document.getElementById('escuela').value,
+                nombre: document.getElementById('nombre').value,
+                dni: document.getElementById('dni').value,
+                cargo: document.getElementById('cargo').value,
+                telefono: document.getElementById('telefono').value
+            };
+
+            if(usuario.escuela && usuario.nombre) {
+                localStorage.setItem('usuarioAlerta', JSON.stringify(usuario));
+                alert("Datos guardados. Redirigiendo...");
+                window.location.href = 'index.html';
+            } else {
+                alert("Por favor, complete al menos la escuela y su nombre.");
+            }
+        }
+    </script>
+</body>
+</html>
