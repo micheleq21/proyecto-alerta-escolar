@@ -1,24 +1,63 @@
-// Verificar si ya existe configuración
-if (!localStorage.getItem('usuarioAlerta')) {
-    window.location.href = 'config.html';
-}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Alerta Escolar</title>
+    <style>
+        body { display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background-color: #f4f4f4; }
+        #boton-panico {
+            background-color: darkred;
+            color: white;
+            padding: 50px;
+            font-size: 24px;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body>
+    <button id="boton-panico">BOTÓN DE PÁNICO</button>
 
-// Al apretar el botón, ahora leemos los datos guardados
-document.getElementById('boton-panico').addEventListener('click', async () => {
-    const datosUsuario = JSON.parse(localStorage.getItem('usuarioAlerta'));
-    
-    // Aquí es donde más adelante añadiremos la geolocalización
-    console.log("Enviando alerta para:", datosUsuario);
-    
-    try {
-        const response = await fetch('/api/alerta', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(datosUsuario) // Enviamos todos los datos al servidor
+    <script>
+        // 1. Verificador de usuario
+        if (!localStorage.getItem('usuarioAlerta')) {
+            window.location.href = 'config.html';
+        }
+
+        // 2. Lógica del Botón con Geolocalización
+        document.getElementById('boton-panico').addEventListener('click', () => {
+            const datosUsuario = JSON.parse(localStorage.getItem('usuarioAlerta'));
+
+            if (navigator.geolocation) {
+                // Pedimos la ubicación al navegador
+                navigator.geolocation.getCurrentPosition(async (position) => {
+                    const ubicacion = {
+                        latitud: position.coords.latitude,
+                        longitud: position.coords.longitude
+                    };
+
+                    // Combinamos los datos del usuario con su ubicación
+                    const payload = { ...datosUsuario, ubicacion: ubicacion };
+
+                    try {
+                        const response = await fetch('/api/alerta', {
+                            method: 'POST',
+                            headers: {'Content-Type': 'application/json'},
+                            body: JSON.stringify(payload)
+                        });
+                        alert("Alerta enviada desde tu ubicación.");
+                    } catch (error) {
+                        alert("Error al enviar la alerta.");
+                    }
+                }, (error) => {
+                    alert("Error: No pudimos obtener tu ubicación. Por favor, activa el GPS.");
+                });
+            } else {
+                alert("Tu navegador no soporta geolocalización.");
+            }
         });
-        const data = await response.json();
-        alert("Alerta enviada para: " + datosUsuario.nombre);
-    } catch (error) {
-        alert("Hubo un error al enviar la alerta");
-    }
-});
+    </script>
+</body>
+</html>
