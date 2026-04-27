@@ -1,13 +1,12 @@
 from http.server import BaseHTTPRequestHandler
 import json
-import os
-from supabase import create_client, Client
+from supabase import create_client
 
-# Configura tus credenciales (¡No las compartas!)
-SUPABASE_URL = "TU_URL_AQUÍ" # Pega aquí la Project URL
-SUPABASE_KEY = "TU_KEY_AQUÍ"  # Pega aquí la clave que encontraste en la captura
+# Usa los datos que encontraste en Supabase (Settings -> API)
+URL = "TU_PROJECT_URL" # Pega aquí tu URL
+KEY = "TU_ANON_KEY"    # Pega aquí tu clave (la que empieza con sb_...)
 
-supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+supabase = create_client(URL, KEY)
 
 class handler(BaseHTTPRequestHandler):
     def do_POST(self):
@@ -15,8 +14,7 @@ class handler(BaseHTTPRequestHandler):
         post_data = self.rfile.read(content_length)
         data = json.loads(post_data.decode('utf-8'))
         
-        # Insertar en Supabase
-        # Asegúrate de que los nombres de los campos coincidan exactamente con tu tabla
+        # Guardar en Supabase
         try:
             supabase.table("alertas").insert({
                 "nombre": data.get("nombre"),
@@ -35,7 +33,7 @@ class handler(BaseHTTPRequestHandler):
             
         self.send_header('Content-type', 'application/json')
         self.end_headers()
-        self.wfile.write(json.dumps({"status": "success"}).encode('utf-8'))
+        self.wfile.write(json.dumps({"status": "datos guardados"}).encode('utf-8'))
 
     def do_OPTIONS(self):
         self.send_response(200)
