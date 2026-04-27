@@ -1,62 +1,24 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alerta Escolar</title>
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f4f4f4;
-            font-family: Arial, sans-serif;
-        }
-        #btnAlerta {
-            width: 80%;
-            max-width: 400px;
-            height: 250px;
-            background-color: #ff0000;
-            color: white;
-            font-size: 32px;
-            font-weight: bold;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            box-shadow: 0 10px 15px rgba(0,0,0,0.3);
-            transition: transform 0.1s;
-        }
-        #btnAlerta:active {
-            transform: scale(0.95);
-            background-color: #cc0000;
-        }
-    </style>
-</head>
-<body>
+// Verificar si ya existe configuración
+if (!localStorage.getItem('usuarioAlerta')) {
+    window.location.href = 'config.html';
+}
 
-    <button id="btnAlerta">BOTÓN DE PÁNICO</button>
-
-    <script>
-        document.getElementById('btnAlerta').addEventListener('click', function() {
-            // Enviamos la señal a nuestra API en la carpeta /api/alerta
-            fetch('/api/alerta', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                alert('Alerta enviada exitosamente');
-                console.log('Respuesta del servidor:', data);
-            })
-            .catch(error => {
-                alert('Hubo un error al enviar la alerta');
-                console.error('Error:', error);
-            });
+// Al apretar el botón, ahora leemos los datos guardados
+document.getElementById('boton-panico').addEventListener('click', async () => {
+    const datosUsuario = JSON.parse(localStorage.getItem('usuarioAlerta'));
+    
+    // Aquí es donde más adelante añadiremos la geolocalización
+    console.log("Enviando alerta para:", datosUsuario);
+    
+    try {
+        const response = await fetch('/api/alerta', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(datosUsuario) // Enviamos todos los datos al servidor
         });
-    </script>
-</body>
-</html>
+        const data = await response.json();
+        alert("Alerta enviada para: " + datosUsuario.nombre);
+    } catch (error) {
+        alert("Hubo un error al enviar la alerta");
+    }
+});
