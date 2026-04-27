@@ -3,8 +3,8 @@ import json
 from supabase import create_client
 
 # Usa los datos que encontraste en Supabase (Settings -> API)
-URL = "TU_PROJECT_URL" # Pega aquí tu URL
-KEY = "TU_ANON_KEY"    # Pega aquí tu clave (la que empieza con sb_...)
+URL = "https://knnnemdkahzovufelowc.supabase.co"
+KEY = "sb_publishable_kCqiY8Y2T2JuDRMzYQsL8Q_KR7K-ee2" 
 
 supabase = create_client(URL, KEY)
 
